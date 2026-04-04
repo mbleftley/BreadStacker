@@ -493,22 +493,17 @@ class Game {
     }
 
     drawRuler(scale = 1.0) {
-        if (this.slabs.length === 0) return;
+        if (this.slabs.length <= 1) return;
         const first = this.slabs[0];
         const last = this.slabs[this.slabs.length - 1];
-
-        // --- RESPONSIVE POSITIONING: Anchor the ruler to the TOWER, not the window width ---
         const towerMidX = first.x + (first.width / 2);
-        
-        // COMPENSATE FOR SCALE: Keep text at a readable screen-space size
         const compScale = 1 / scale; 
         const startX = towerMidX + (120 * compScale); 
         
         this.ctx.save();
         this.ctx.strokeStyle = 'rgba(217, 119, 6, 0.08)';
-        this.ctx.lineWidth = 2 * compScale; // Thicker line when zoomed out
+        this.ctx.lineWidth = 2 * compScale;
         this.ctx.setLineDash([5 * compScale, 15 * compScale]);
-
         this.ctx.beginPath();
         this.ctx.moveTo(startX, first.y + this.slabThickness);
         this.ctx.lineTo(startX, last.y);
@@ -519,23 +514,28 @@ class Game {
         this.ctx.font = `700 ${Math.round(18 * compScale)}px Outfit`; 
         this.ctx.textAlign = 'left';
 
-        let currentSlices = 0;
+        // --- CUSTOM INDICATORS: 30%, 60%, and 90% points ---
+        const count = this.slabs.length - 1;
+        const targets = [...new Set([
+            Math.max(1, Math.floor(count * 0.30)),
+            Math.max(1, Math.floor(count * 0.60)),
+            Math.max(1, Math.floor(count * 0.90))
+        ])].sort((a,b) => a-b);
+
+        let runningSum = 0;
         this.slabs.forEach((slab, index) => {
-            if (index === 0) return; // Skip the base board slices in the ruler count
-            const countForThisLevel = slab.sliceCount * Math.round(slab.height / this.slabThickness);
-            currentSlices += countForThisLevel;
-
-            if (index > 0 && index % 3 === 0) {
+            if (index === 0) return;
+            runningSum += slab.sliceCount * Math.round(slab.height / this.slabThickness);
+            
+            if (targets.includes(index)) {
                 const tickY = slab.y;
-
                 this.ctx.strokeStyle = 'rgba(251, 191, 36, 0.4)';
                 this.ctx.lineWidth = 2 * compScale;
                 this.ctx.beginPath();
                 this.ctx.moveTo(startX - (12 * compScale), tickY); 
                 this.ctx.lineTo(startX + (12 * compScale), tickY);
                 this.ctx.stroke();
-
-                this.ctx.fillText(`${currentSlices}`, startX + (25 * compScale), tickY + (6 * compScale));
+                this.ctx.fillText(`${runningSum}`, startX + (25 * compScale), tickY + (6 * compScale));
             }
         });
         this.ctx.restore();
