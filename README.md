@@ -2,8 +2,6 @@
 
 A high-fidelity, premium arcade experience built for the modern web. **Bread Stacker** combines minimalist boutique aesthetics with a sophisticated procedural engine to deliver a tactile and rewarding stacking challenge.
 
-![Bread Stacker Hero](https://images.unsplash.com/photo-1549931319-a545dcf3bc73?auto=format&fit=crop&q=80&w=1200)
-
 ## 🍞 The Experience
 
 In **Bread Stacker**, precision is the secret ingredient. Build the ultimate sourdough skyscraper by perfectly timing your slice drops. Every "Perfect" landing starts the **YEAST MODE** combo, intensifying the audio and visual feedback.
