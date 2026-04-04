@@ -410,7 +410,26 @@ class Game {
         const overlapX2 = Math.min(last.x + last.width, curr.x + curr.width);
         const overlapWidth = overlapX2 - overlapX1;
 
-        if (overlapWidth < SLICE_WIDTH * 0.5) { this.gameOver(); return; } // Leniency: need at least half a slice to survive
+        if (overlapWidth < SLICE_WIDTH * 0.5) { 
+            // --- FULL MISS DEBRIS ---
+            const loafCount = Math.round(curr.height / this.slabThickness);
+            for (let L = 0; L < loafCount; L++) {
+                const ly = curr.y + (L * this.slabThickness);
+                for (let i = 0; i < curr.sliceCount; i++) {
+                    this.debris.push(new Debris(
+                        curr.x + i * SLICE_WIDTH,
+                        ly,
+                        SLICE_WIDTH,
+                        this.slabThickness,
+                        '#633908',
+                        curr.x < last.x ? -1 : 1
+                    ));
+                }
+            }
+            this.currentSlab = null; // Remove it from the update loop
+            setTimeout(() => this.gameOver(), 800); // Slight delay for the "oops" fall animation
+            return; 
+        }
 
         const landedSlices = Math.round(overlapWidth / SLICE_WIDTH); // Use round for massive leniency
         const lostSlices = curr.sliceCount - landedSlices;
@@ -422,7 +441,7 @@ class Game {
 
         if (lostSlices === 0 && diff < 14) { // Increased margin to 14px (one full slice)
             this.consecutivePerfects++;
-            this.comboMultiplier = Math.min(5, this.comboMultiplier + 1); // Max 5 loaves stacked
+            this.comboMultiplier++; 
             this.maxCombo = Math.max(this.maxCombo, this.comboMultiplier);
             finalX = last.x;
             this.soundManager.playSuccess(true, this.comboMultiplier);
@@ -437,7 +456,7 @@ class Game {
             // --- FIXED DEBRIS: Spawn for each loaf in the combo stack ---
             const dropDir = curr.x < last.x ? -1 : 1;
             const startX = curr.x < last.x ? curr.x : overlapX2;
-            const loafCount = Math.min(5, Math.round(curr.height / this.slabThickness));
+            const loafCount = Math.round(curr.height / this.slabThickness);
 
             for (let L = 0; L < loafCount; L++) {
                 const ly = curr.y + (L * this.slabThickness);
