@@ -348,6 +348,7 @@ class Game {
         window.addEventListener('resize', () => this.resize());
         document.getElementById('start-button').onclick = () => { this.soundManager.init(); this.startSession(); };
         document.getElementById('restart-button').onclick = () => this.startSession();
+        document.getElementById('back-to-menu-button').onclick = () => this.showMenu();
         const handleInput = (e) => {
             if (this.gameState === 'PLAYING') {
                 if (e.type === 'keydown' && e.code !== 'Space') return;
@@ -559,6 +560,26 @@ class Game {
             });
         }
         this.gameOverScreen.classList.add('active');
+    }
+
+    showMenu() {
+        this.gameState = 'START';
+        this.startScreen.classList.add('active');
+        this.gameOverScreen.classList.remove('active');
+        document.getElementById('score-container').classList.remove('visible');
+        
+        // --- CLEANUP: Proper game world wipe ---
+        this.slabs = [];
+        this.debris = [];
+        this.particles = [];
+        this.floatingTexts = [];
+        this.currentSlab = null;
+        this.score = 0;
+        this.displayScore = 0;
+        this.scoreValue.textContent = "0";
+
+        // --- CAMERA RESET: Back to base view ---
+        this.camera = { x: 0, targetX: 0, y: 0, targetY: 0, scale: 1, targetScale: 1, yOffset: 0, xOffset: 0 };
     }
 
     animate() {
