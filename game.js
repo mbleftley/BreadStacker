@@ -514,12 +514,12 @@ class Game {
         this.ctx.font = `700 ${Math.round(18 * compScale)}px Outfit`; 
         this.ctx.textAlign = 'left';
 
-        // --- CUSTOM INDICATORS: 30%, 60%, and 90% points ---
+        // --- PERCENTAGE MARKERS: 20%, 50%, and 80% points ---
         const count = this.slabs.length - 1;
         const targets = [...new Set([
-            Math.max(1, Math.floor(count * 0.30)),
-            Math.max(1, Math.floor(count * 0.60)),
-            Math.max(1, Math.floor(count * 0.90))
+            Math.max(1, Math.floor(count * 0.20)),
+            Math.max(1, Math.floor(count * 0.50)),
+            Math.max(1, Math.floor(count * 0.80))
         ])].sort((a,b) => a-b);
 
         let runningSum = 0;
