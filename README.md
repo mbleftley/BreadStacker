@@ -1,40 +1,70 @@
-# 🥖 Bread Stacker: The Real Yeast v1.0
+# BREAD STACKER // ARCADE INTERFACE
+### PREMIUM PROCEDURAL STACKING SYSTEM
 
-A high-fidelity, premium arcade experience built for the modern web. **Bread Stacker** combines minimalist boutique aesthetics with a sophisticated procedural engine to deliver a tactile and rewarding stacking challenge.
+[![License: MIT](https://img.shields.io/badge/License-MIT-fcd34d.svg)](https://opensource.org/licenses/MIT)
+[![Live Demo](https://img.shields.io/badge/Live_Deployment-Access_Interface-fbbf24.svg)](https://mbleftley.github.io/BreadStacker/)
+[![System Status](https://img.shields.io/badge/System_Status-Operational-fbbf24.svg)](#)
 
-## 🍞 The Experience
-
-In **Bread Stacker**, precision is the secret ingredient. Build the ultimate sourdough skyscraper by perfectly timing your slice drops. Every "Perfect" landing starts the **YEAST MODE** combo, intensifying the audio and visual feedback.
-
-### ✨ Key Features
-
-*   **📏 Anti-Overlap Engine**: A "Senior-Grade" responsive camera that dynamically measures the literal pixel gap between UI elements. Whether on an ultra-wide monitor or a narrow mobile screen, the tower perfectly "self-resizes" to fit its framing.
-*   **🎧 Baker's Snap Audio**: High-fidelity, percussive "Wood Block" sounds synthesized in real-time via the Web Audio API. Snaps increase in pitch as your combo grows, providing immersive auditory feedback.
-*   **📐 Absolute Readability**: A scale-compensated measurement ruler. The font size automatically adjusts to the tower's zoom level, ensuring the slice counts remain crisp and legible at all scales.
-*   **💎 Minimalist Aesthetic**: A premium, decluttered UI utilizing glassmorphism, modern typography (Outfit), and a curated bakery color palette.
-
-## 🛠️ Technical Stack
-
-*   **Core**: Vanilla JavaScript (ES6+)
-*   **Graphics**: HTML5 Canvas API
-*   **Animation**: [GSAP](https://greensock.com/gsap/) for smooth camera transitions and UI motion.
-*   **Audio**: Web Audio API (Procedural Synthesis)
-*   **Styles**: Modern CSS with absolute responsive anchoring.
-
-## 🚀 Getting Started
-
-1.  **Clone the Repo**:
-    ```bash
-    git clone https://github.com/[your-username]/BreadStacker.git
-    ```
-2.  **Open the Oven**:
-    Simply open `index.html` in any modern browser. No build steps or dependencies are required.
-
-## 🎮 Controls
-
-*   **Desktop**: Tap **SPACE** or **Left-Click** to drop a slice.
-*   **Mobile**: **Tap anywhere** on the screen.
+**BREAD STACKER** is a high-fidelity, architectural arcade experience built with a precision-engineered procedural stacking engine. 
 
 ---
 
-*“Rising to the top, one slice at a time.”* 🥖🏆🏁✨📐🎧🎬
+## 🕹️ GAMEPLAY PROFILES
+
+### [ 🧱 ] STANDARD MODE
+The classic stacking circuit. Build a sophisticated structure by perfectly timing your slice drops. 
+*   **Parameters:** Falling below 50% overlap results in an immediate system failure.
+*   **Goal:** Construct the tallest, most stable vertical structure possible.
+
+### [ ⚡ ] COMBO SYSTEM (HIGH INTENSITY)
+A performance-based challenge triggered by consecutive "Perfect" alignments.
+*   **Parameters:** Every perfect placement adds to your combo multiplier (up to x5).
+*   **Reward Logic:** Perfect hits trigger **YEAST MODE** (Dynamic Multiplier), intensifying audio-visual feedback and accelerating score gains.
+*   **Objective:** Maintain maximum structural rhythm and momentum through precise timing.
+
+---
+
+## 🖥️ SYSTEM ARCHITECTURE & TELEMETRY
+
+*   **Anti-Overlap Engine:** A dynamic, responsive camera system that measures relative pixel gaps between UI elements to ensure optimal framing across all viewports.
+*   **Procedural Audio Engine:** High-fidelity, synthesized "Wood Block" percussion generated in real-time via the Web Audio API. Tonal frequencies scale dynamically based on combo performance.
+*   **Measurement Ruler:** A scale-compensated vertical telemetry system. Font scaling and positioning adjust dynamically to the tower's zoom level for constant legibility.
+
+---
+
+## 🛠️ TECHNICAL SPECIFICATIONS
+
+| Component | Specification |
+| :--- | :--- |
+| **Logic** | Vanilla JavaScript (ES6+) |
+| **Graphics** | HTML5 Canvas API |
+| **Motion** | GSAP (Advanced Interpolation & UI) |
+| **Audio** | Web Audio API (Procedural Synthesis) |
+| **Styling** | Modern CSS (Absolute Responsive Anchoring) |
+| **Storage** | LocalStorage (High Score Telemetry) |
+
+---
+
+## 🚀 DEPLOYMENT & INSTALLATION
+
+The system requires no backend infrastructure. Simply clone the repository and execute `index.html`.
+
+```bash
+# Clone the repository
+git clone https://github.com/mbleftley/BreadStacker.git
+
+# Navigate to the project directory
+cd BreadStacker
+
+# Launch the interface
+open index.html
+```
+
+---
+
+## 🎖️ SYSTEM CREDITS
+**SYSTEM ARCHITECT:** [MBLXPERIMENT](https://x.com/MBLExperiment)  
+**TECHNICAL ASSISTANT:** Developed with the support of [Google's Anti-Gravity AI](https://antigravity.google/).
+
+> [!NOTE]
+> *This project was built to test high-fidelity UI responsiveness and procedural audio rhythm. All physics and measurements are optimized for arcade-style precision.*
