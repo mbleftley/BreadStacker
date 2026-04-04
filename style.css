@@ -299,3 +299,56 @@ canvas {
     max-height: 100%;
 }
 
+
+#start-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 1rem;
+    pointer-events: all;
+}
+
+.bmc-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.8rem 2.5rem;
+    border: 2px solid #d97706;
+    background: rgba(0, 0, 0, 0.4);
+    color: #fbbf24;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.3rem;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.bmc-button:hover {
+    background: #d97706;
+    color: #1a0f02;
+    box-shadow: 0 0 20px rgba(217, 119, 6, 0.4);
+    transform: translateY(-2px);
+}
+
+.developer-credit {
+    font-size: 0.65rem;
+    color: var(--white);
+    opacity: 0.4;
+    letter-spacing: 0.5rem;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.developer-credit a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    transition: opacity 0.3s ease;
+}
+
+.developer-credit a:hover {
+    opacity: 1;
+}
