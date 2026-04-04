@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bread Stacker: The Real Yeast</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+    <div id="game-ui">
+        <div id="score-container">
+            <span id="score-label">SLICES STACKED</span>
+            <div id="score-value">0</div>
+        </div>
+        
+        <div id="combo-container">
+            <div id="combo-text">YEAST MODE!</div>
+            <div id="combo-dots"></div>
+        </div>
+
+        <div id="start-screen" class="overlay active">
+            <h1>BREAD STACKER</h1>
+            <h2>THE REAL YEAST</h2>
+            <p>Tap or Press SPACE to drop the slice.</p>
+            <button id="start-button">START BAKING</button>
+        </div>
+
+        <div id="game-over-screen" class="overlay">
+            <div class="spacer"></div> <!-- Pushes button to bottom -->
+            <button id="restart-button">RETRY FRESH BATCH</button>
+        </div>
+    </div>
+    
+    <canvas id="game-canvas"></canvas>
+
+    <script src="game.js"></script>
+</body>
+</html>
