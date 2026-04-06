@@ -24,21 +24,23 @@
         <canvas id="top-canvas"></canvas>
         
         <div id="game-ui">
-        <div id="score-container">
-            <span id="score-label">SLICES STACKED</span>
-            <div id="score-value">0</div>
-        </div>
+            <!-- HUD -->
+            <div id="score-container">
+                <span id="score-label">SLICES STACKED</span>
+                <div id="score-value">0</div>
+            </div>
 
-        <div id="combo-container">
-            <div id="combo-text">YEAST MODE!</div>
-            <div id="combo-dots"></div>
-        </div>
+            <div id="combo-container">
+                <div id="combo-text">YEAST MODE!</div>
+                <div id="combo-dots"></div>
+            </div>
 
-        <div id="start-screen" class="overlay active">
-            <h1>BREAD<br>STACKER</h1>
-            <h2>THE REAL YEAST</h2>
-            <p>Tap or Press SPACE to drop the slice.</p>
-            <button id="start-button">START STACKING</button>
+            <!-- Start Screen -->
+            <div id="start-screen" class="overlay active">
+                <h1>BREAD<br>STACKER</h1>
+                <h2>THE REAL YEAST</h2>
+                <p>Tap or Press SPACE to drop the slice.</p>
+                <button id="start-button">START STACKING</button>
                 <div id="start-footer">
                     <button id="show-leaderboard-btn" class="secondary-btn">GLOBAL RANKINGS</button>
                     <div id="footer-links">
@@ -50,36 +52,39 @@
                         SYSTEM DEVELOPED BY <a href="https://x.com/MBLExperiment" target="_blank" style="color: inherit;">MBLXPERIMENT</a>
                     </div>
                 </div>
+            </div> <!-- Proper close for start-screen -->
 
-        <div id="game-over-screen" class="overlay">
-            <div class="spacer"></div>
-            <div id="game-over-actions">
-                <button id="restart-button">STACK BREAD</button>
-                <button id="back-to-menu-button">BACK TO MENU</button>
-            </div>
-        </div>
-
-        <div id="name-entry-overlay" class="overlay">
-            <div id="name-input-container">
-                <h2>TOP BREAD STACKER!</h2>
-                <input type="text" id="player-name" placeholder="ENTER YOUR NAME" maxlength="15">
-                <button id="submit-score-btn">SUBMIT TO GLOBAL</button>
-                <button id="cancel-save-btn" class="text-btn">CANCEL</button>
-            </div>
-        </div>
-
-        <div id="leaderboard-overlay" class="overlay">
-            <div id="leaderboard-container">
-                <h2>GLOBAL RANKINGS</h2>
-                <div id="leaderboard-list">
-                    <!-- Leaderboard items will be injected here -->
+            <!-- Game Over Screen -->
+            <div id="game-over-screen" class="overlay">
+                <div class="spacer"></div>
+                <div id="game-over-actions">
+                    <button id="restart-button">STACK BREAD</button>
+                    <button id="back-to-menu-button">BACK TO MENU</button>
                 </div>
-                <button id="close-leaderboard-btn">BACK</button>
             </div>
-        </div>
-    </div>
 
-    <canvas id="game-canvas"></canvas>
+            <!-- Name Entry Overlay (Automated) -->
+            <div id="name-entry-overlay" class="overlay">
+                <div id="name-input-container">
+                    <h2>TOP BREAD STACKER!</h2>
+                    <input type="text" id="player-name" placeholder="ENTER YOUR NAME" maxlength="15">
+                    <button id="submit-score-btn">SUBMIT TO GLOBAL</button>
+                    <button id="cancel-save-btn" class="text-btn">CANCEL</button>
+                </div>
+            </div>
+
+            <!-- Leaderboard Overlay -->
+            <div id="leaderboard-overlay" class="overlay">
+                <div id="leaderboard-container">
+                    <h2>GLOBAL RANKINGS</h2>
+                    <div id="leaderboard-list">
+                        <!-- Leaderboard items will be injected here -->
+                    </div>
+                    <button id="close-leaderboard-btn">BACK</button>
+                </div>
+            </div>
+        </div> <!-- End of game-ui -->
+    </div> <!-- End of game-container -->
 
     <script src="game.js"></script>
 </body>
