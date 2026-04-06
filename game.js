@@ -90,7 +90,6 @@ class SoundManager {
             const osc = this.ctx.createOscillator();
             const gain = this.ctx.createGain();
             osc.type = 'triangle';
-            osc.setTargetAtTime = osc.setTargetAtTime || osc.gainTargetAtTime; // Compat
             osc.frequency.setValueAtTime(freq, now + i * 0.1);
             gain.gain.setValueAtTime(0, now + i * 0.1);
             gain.gain.linearRampToValueAtTime(0.1, now + i * 0.1 + 0.02);
@@ -343,6 +342,8 @@ class Game {
     constructor() {
         this.canvas = document.getElementById('game-canvas');
         this.ctx = this.canvas.getContext('2d');
+        this.topCanvas = document.getElementById('top-canvas');
+        this.topCtx = this.topCanvas.getContext('2d');
         this.scoreValue = document.getElementById('score-value');
         this.finalScoreValue = document.getElementById('final-score-value');
         this.maxMultiplierValue = document.getElementById('max-multiplier-value');
@@ -352,7 +353,7 @@ class Game {
         this.comboContainer = document.getElementById('combo-container');
         this.comboText = document.getElementById('combo-text');
         this.soundManager = new SoundManager();
-        this.slabs = []; this.debris = []; this.particles = []; this.floatingTexts = [];
+        this.slabs = []; this.debris = []; this.particles = []; this.topParticles = []; this.floatingTexts = [];
         this.currentSlab = null;
         this.camera = { x: 0, targetX: 0, y: 0, targetY: 0, scale: 1, targetScale: 1, yOffset: 0, xOffset: 0 };
         this.score = 0; this.displayScore = 0;
@@ -456,12 +457,17 @@ class Game {
         this.animate();
     }
 
-    resize() { this.canvas.width = window.innerWidth; this.canvas.height = window.innerHeight; }
+    resize() { 
+        this.canvas.width = window.innerWidth; 
+        this.canvas.height = window.innerHeight; 
+        this.topCanvas.width = window.innerWidth;
+        this.topCanvas.height = window.innerHeight;
+    }
 
     startSession() {
         this.gameState = 'PLAYING'; this.score = 0; this.displayScore = 0;
         this.consecutivePerfects = 0; this.comboMultiplier = 1; this.maxCombo = 1;
-        this.slabs = []; this.debris = []; this.particles = []; this.floatingTexts = []; this.currentSlab = null;
+        this.slabs = []; this.debris = []; this.particles = []; this.topParticles = []; this.floatingTexts = []; this.currentSlab = null;
         this.camera = { x: 0, targetX: 0, y: 0, targetY: 0, scale: 1, targetScale: 1, yOffset: 0, xOffset: 0 };
         this.scoreValue.textContent = "0";
         document.getElementById('score-container').classList.add('visible');
@@ -728,11 +734,10 @@ class Game {
         const colors = ['#fbbf24', '#fef3c7', '#d97706', '#ffffff'];
         for (let i = 0; i < count; i++) {
             const x = Math.random() * this.canvas.width;
-            const y = this.canvas.height + 50;
-            const p = new Particle(x, y, colors[Math.floor(Math.random() * colors.length)]);
+            const p = new Particle(x, this.canvas.height + 50, colors[Math.floor(Math.random() * colors.length)]);
             p.vy = -Math.random() * 25 - 10;
             p.vx = (Math.random() - 0.5) * 15;
-            this.particles.push(p);
+            this.topParticles.push(p);
         }
     }
 
@@ -839,6 +844,7 @@ class Game {
         this.slabs = [];
         this.debris = [];
         this.particles = [];
+        this.topParticles = [];
         this.floatingTexts = [];
         this.currentSlab = null;
         this.score = 0;
@@ -926,6 +932,14 @@ class Game {
         this.particles = this.particles.filter(p => {
             const alive = p.update();
             if (alive) p.draw(this.ctx);
+            return alive;
+        });
+
+        this.topCtx.clearRect(0, 0, this.topCanvas.width, this.topCanvas.height);
+
+        this.topParticles = this.topParticles.filter(p => {
+            const alive = p.update();
+            if (alive) p.draw(this.topCtx); // Render only celebrations on top canvas
             return alive;
         });
 
