@@ -9,6 +9,17 @@
 
 ---
 
+## 🔥 THE LIVE BAKERY: GLOBAL RANKINGS
+The latest "Real Yeast" update introduces an **Artisan Hall of Fame**, allowing players to compete globally on a persistent leaderboard powered by **Google Firebase**.
+
+*   **🏆 Prestige Hierarchy:** Top-ranked players are distinguished with unique visual tiers:
+    - **Rank #1 (Champion):** Intense Golden Aura + Shimmering Prestige Card.
+    - **Rank #2 & #3 (Master):** Sleek Silver and Polished Bronze finishes.
+*   **📡 Real-Time Metadata:** Every entry tracks and displays achieving time (e.g., "Just now", "2h ago") to keep the competition fresh.
+*   **✨ Personalized Feedback:** Newly submitted entries are instantly highlighted with a **Golden Pulse Animation** to track your rise through the ranks.
+
+---
+
 ## 🕹️ GAME MODES
 
 ### [ 🍞 ] STANDARD STACK
@@ -26,7 +37,7 @@ A high-intensity state triggered by perfectly aligning your drops.
 
 ## 🖥️ ENGINE & FEATURES
 
-*   **Anti-Overlap Camera:** A dynamic camera system that automatically adjusts its zoom and position to keep your tower perfectly framed on any screen size.
+*   **Anti-Overlap Camera:** A dynamic camera system that automatically adjusts its zoom and position to keep your tower perfectly framed and centered on any screen size.
 *   **Procedural Audio Engine:** Real-time synthesized "Snap" sounds that increase in pitch as your combo grows, providing tactile auditory feedback.
 *   **Smart Measurement Ruler:** A vertical ruler that tracks your progress in real-time. The display automatically scales with the camera to ensure your slice count is always legible.
 
@@ -36,18 +47,18 @@ A high-intensity state triggered by perfectly aligning your drops.
 
 | Component | Specification |
 | :--- | :--- |
+| **Backend** | Google Firestore (Real-time Leaderboard) |
 | **Logic** | Vanilla JavaScript (ES6+) |
 | **Graphics** | HTML5 Canvas API |
-| **Animation** | GSAP (Smooth Transitions & UI) |
+| **Animation** | GSAP (Smooth Transitions & UI Enhancements) |
 | **Audio** | Web Audio API (Procedural Synthesis) |
-| **Styling** | Modern CSS (Responsive Layouts) |
-| **Physics** | Custom Isometric Stacking Logic |
+| **Aesthetics** | Modern Glassmorphism & Dual-Weight Typography |
 
 ---
 
 ## 🚀 GETTING STARTED
 
-Bread Stacker is built for the modern web and requires no installation. Simply clone the repository and open `index.html`.
+Bread Stacker is built for the modern web and requires no installation. To run the full experience with real-time rankings locally:
 
 ```bash
 # Clone the repository
@@ -56,9 +67,14 @@ git clone https://github.com/mbleftley/BreadStacker.git
 # Enter the directory
 cd BreadStacker
 
-# Play the game
-open index.html
+# Install dependencies (Optional: only needed for Node logic)
+npm install
+
+# Start the development server
+node dev_server.js
 ```
+
+Then visit `http://localhost:3000` in your browser.
 
 ---
 
