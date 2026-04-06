@@ -867,9 +867,7 @@ class Game {
     }
 
     animate() {
-        // Render Background (Main Context)
-        this.ctx.fillStyle = '#0c0802';
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         if (this.gameState === 'START') {
             requestAnimationFrame(() => this.animate());

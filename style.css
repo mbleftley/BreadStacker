@@ -17,6 +17,15 @@
     -webkit-tap-highlight-color: transparent;
 }
 
+#game-container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    background: radial-gradient(circle at center, #2d1b04 0%, #0c0802 100%);
+}
+
 body, html {
     width: 100%;
     height: 100%;
@@ -416,20 +425,18 @@ button:active {
     50% { transform: translateY(-10px); }
 }
 
-#game-canvas {
-    display: block;
-    background: radial-gradient(circle at center, #2d1b04 0%, #0c0802 100%);
-}
-
-#top-canvas {
+#game-canvas, #top-canvas {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    pointer-events: none; /* User clicks pass through */
-    z-index: 10005; /* Always on very top */
     background: transparent !important;
+}
+
+#top-canvas {
+    pointer-events: none;
+    z-index: 10005;
 }
 
 canvas {
