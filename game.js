@@ -364,7 +364,8 @@ class Game {
         this.shake = 0;
         this.firebaseInitialized = false;
         this.initFirebase();
-        this.currentSlab = null; // Explicitly null
+        this.currentSlab = null; 
+        this.lastSubmittedId = null; // Track latest submission for pulsing
         this.init();
     }
 
@@ -765,11 +766,12 @@ class Game {
         btn.textContent = "SAVING...";
 
         try {
-            await this.db.collection("leaderboard").add({
+            const docRef = await this.db.collection("leaderboard").add({
                 name: name,
                 score: this.score,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
+            this.lastSubmittedId = docRef.id; // Capture ID for highlighting
             
             // Transition to leaderboard
             nameInput.value = "";
@@ -809,10 +811,17 @@ class Game {
             snapshot.forEach(doc => {
                 const data = doc.data();
                 const item = document.createElement('div');
-                item.className = 'leaderboard-entry';
+                const isNew = doc.id === this.lastSubmittedId;
+                item.className = `leaderboard-entry rank-${rank} ${isNew ? 'newly-submitted' : ''}`;
+                
+                const timeStr = this.formatRelativeTime(data.timestamp ? data.timestamp.toDate() : null);
+                
                 item.innerHTML = `
                     <span class="entry-rank">#${rank++}</span>
-                    <span class="entry-name">${data.name || 'ANONYMOUS'}</span>
+                    <div class="entry-info">
+                        <span class="entry-name">${data.name || 'ANONYMOUS'}</span>
+                        <span class="entry-time">${timeStr}</span>
+                    </div>
                     <span class="entry-score">${data.score}</span>
                 `;
                 list.appendChild(item);
@@ -825,6 +834,16 @@ class Game {
             console.error("Fetch Error:", e);
             list.innerHTML = '<div class="leaderboard-entry"><span class="entry-name">ERROR FETCHING SCORES</span></div>';
         }
+    }
+
+    formatRelativeTime(date) {
+        if (!date) return "Just now";
+        const now = new Date();
+        const diff = Math.floor((now - date) / 1000);
+        if (diff < 60) return "Just now";
+        if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+        if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+        return `${Math.floor(diff / 86400)}d ago`;
     }
 
     hideLeaderboard() {
