@@ -364,6 +364,7 @@ class Game {
         this.shake = 0;
         this.firebaseInitialized = false;
         this.initFirebase();
+        this.currentSlab = null; // Explicitly null
         this.init();
     }
 
@@ -866,7 +867,16 @@ class Game {
     }
 
     animate() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        // Render Background (Main Context)
+        this.ctx.fillStyle = '#0c0802';
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+        if (this.gameState === 'START') {
+            requestAnimationFrame(() => this.animate());
+            return;
+        }
+
+        this.ctx.save();
         if (this.shake > 0) {
             this.ctx.save();
             this.ctx.translate(Math.random() * this.shake - this.shake / 2, Math.random() * this.shake - this.shake / 2);
