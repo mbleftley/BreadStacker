@@ -13,6 +13,9 @@
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="favicon.png">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 </head>
 
 <body>
@@ -32,6 +35,7 @@
             <h2>THE REAL YEAST</h2>
             <p>Tap or Press SPACE to drop the slice.</p>
             <button id="start-button">START STACKING</button>
+            <button id="show-leaderboard-btn">GLOBAL RANKINGS</button>
             <div id="start-footer">
                 <a href="https://buymeacoffee.com/mbleftleyi" target="_blank" class="bmc-button">
                     <span>☕ BUY ME A COFFEE</span>
@@ -45,8 +49,27 @@
         <div id="game-over-screen" class="overlay">
             <div class="spacer"></div>
             <div id="game-over-actions">
-                <button id="restart-button">RETRY FRESH BATCH</button>
+                <button id="restart-button">STACK BREAD</button>
                 <button id="back-to-menu-button">BACK TO MENU</button>
+            </div>
+        </div>
+
+        <div id="name-entry-overlay" class="overlay">
+            <div id="name-input-container">
+                <h2>TOP BREAD STACKER!</h2>
+                <input type="text" id="player-name" placeholder="ENTER YOUR NAME" maxlength="15">
+                <button id="submit-score-btn">SUBMIT TO GLOBAL</button>
+                <button id="cancel-save-btn" class="text-btn">CANCEL</button>
+            </div>
+        </div>
+
+        <div id="leaderboard-overlay" class="overlay">
+            <div id="leaderboard-container">
+                <h2>GLOBAL RANKINGS</h2>
+                <div id="leaderboard-list">
+                    <!-- Leaderboard items will be injected here -->
+                </div>
+                <button id="close-leaderboard-btn">BACK</button>
             </div>
         </div>
     </div>

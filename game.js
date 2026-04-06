@@ -80,6 +80,27 @@ class SoundManager {
         osc.start(now);
         osc.stop(now + 0.4);
     }
+
+    playJackpot() {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        // Ascending Arpeggio (C Major-ish)
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((freq, i) => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'triangle';
+            osc.setTargetAtTime = osc.setTargetAtTime || osc.gainTargetAtTime; // Compat
+            osc.frequency.setValueAtTime(freq, now + i * 0.1);
+            gain.gain.setValueAtTime(0, now + i * 0.1);
+            gain.gain.linearRampToValueAtTime(0.1, now + i * 0.1 + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.1 + 0.4);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now + i * 0.1);
+            osc.stop(now + i * 0.1 + 0.4);
+        });
+    }
 }
 
 class FloatingText {
@@ -323,7 +344,7 @@ class Game {
         this.canvas = document.getElementById('game-canvas');
         this.ctx = this.canvas.getContext('2d');
         this.scoreValue = document.getElementById('score-value');
-        this.finalStatsValue = document.getElementById('final-stats-value');
+        this.finalScoreValue = document.getElementById('final-score-value');
         this.maxMultiplierValue = document.getElementById('max-multiplier-value');
         this.funComparison = document.getElementById('fun-comparison');
         this.startScreen = document.getElementById('start-screen');
@@ -340,7 +361,71 @@ class Game {
         this.comboMultiplier = 1;
         this.maxCombo = 1;
         this.shake = 0;
+        this.firebaseInitialized = false;
+        this.initFirebase();
         this.init();
+    }
+
+    async initFirebase() {
+        // --- FIREBASE CONFIGURATION ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyCe_9bU3ZVM86S2NqsHTJVERriwVmOckqQ",
+            authDomain: "breadstackergame.firebaseapp.com",
+            projectId: "breadstackergame",
+            storageBucket: "breadstackergame.firebasestorage.app",
+            messagingSenderId: "836938686791",
+            appId: "1:836938686791:web:0e3d110814aede4cce6c62",
+            measurementId: "G-5SYJD1PJTZ"
+        };
+
+        if (typeof firebase !== 'undefined') {
+            try {
+                firebase.initializeApp(firebaseConfig);
+                this.db = firebase.firestore();
+                this.firebaseInitialized = true;
+                console.log("🔥 BreadStacker Firebase Initialized");
+                
+                // Automatic Seeding: Prime the database if empty
+                this.seedLeaderboard();
+            } catch (e) {
+                console.error("Firebase Init Error:", e);
+            }
+        }
+    }
+
+    async seedLeaderboard() {
+        if (!this.firebaseInitialized) return;
+        try {
+            const snapshot = await this.db.collection("leaderboard").limit(1).get();
+            if (snapshot.empty) {
+                console.log("🥯 Seeding initial bread legends...");
+                const legends = [
+                    { name: "LE QUACK", score: 100 },
+                    { name: "YEAST FEAST", score: 90 },
+                    { name: "DOUGH PRO", score: 80 },
+                    { name: "CRUST MASTER", score: 70 },
+                    { name: "LOAF LOVER", score: 60 },
+                    { name: "Sourdough Sam", score: 50 },
+                    { name: "Baguette Bob", score: 40 },
+                    { name: "Ciabatta Chad", score: 30 },
+                    { name: "Rye Riley", score: 20 },
+                    { name: "Bun Ben", score: 10 }
+                ];
+                
+                const batch = this.db.batch();
+                legends.forEach(legend => {
+                    const docRef = this.db.collection("leaderboard").doc();
+                    batch.set(docRef, {
+                        ...legend,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                });
+                await batch.commit();
+                console.log("✅ Legend scores seeded successfully!");
+            }
+        } catch (e) {
+            console.error("Seeding failed:", e);
+        }
     }
 
     init() {
@@ -349,6 +434,13 @@ class Game {
         document.getElementById('start-button').onclick = () => { this.soundManager.init(); this.startSession(); };
         document.getElementById('restart-button').onclick = () => this.startSession();
         document.getElementById('back-to-menu-button').onclick = () => this.showMenu();
+        
+        // Leaderboard Listeners
+        document.getElementById('show-leaderboard-btn').onclick = () => this.showLeaderboard();
+        document.getElementById('close-leaderboard-btn').onclick = () => this.hideLeaderboard();
+        document.getElementById('submit-score-btn').onclick = () => this.submitCurrentScore();
+        document.getElementById('cancel-save-btn').onclick = () => this.closeNameEntry();
+
         const handleInput = (e) => {
             if (this.gameState === 'PLAYING') {
                 if (e.type === 'keydown' && e.code !== 'Space') return;
@@ -374,6 +466,14 @@ class Game {
         this.scoreValue.textContent = "0";
         document.getElementById('score-container').classList.add('visible');
         this.startScreen.classList.remove('active'); this.gameOverScreen.classList.remove('active');
+        
+        // Reset submit button state for new session
+        const submitBtn = document.getElementById('submit-score-btn');
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "SUBMIT TO GLOBAL";
+        }
+
         const x = (this.canvas.width - (START_SLICES * SLICE_WIDTH)) / 2;
         const y = this.canvas.height - 150;
         const base = new Slab(x, y, START_SLICES, this.slabThickness, true);
@@ -560,7 +660,7 @@ class Game {
         this.ctx.restore();
     }
 
-    gameOver() {
+    async gameOver() {
         this.gameState = 'GAMEOVER'; this.soundManager.playThud(); this.shake = 40;
         document.getElementById('score-container').classList.add('visible');
 
@@ -579,6 +679,154 @@ class Game {
             });
         }
         this.gameOverScreen.classList.add('active');
+
+        // Check if Top 10
+        if (this.score > 0 && this.firebaseInitialized) {
+            try {
+                const snapshot = await this.db.collection("leaderboard")
+                    .orderBy("score", "desc")
+                    .limit(10)
+                    .get();
+                
+                let isTop10 = false;
+                if (snapshot.size < 10) {
+                    isTop10 = true;
+                } else {
+                    const tenPercentile = snapshot.docs[9].data().score;
+                    if (this.score > tenPercentile) isTop10 = true;
+                }
+
+                if (isTop10) {
+                    console.log("🏆 TOP 10 QUALIFIED! Score:", this.score);
+                    // CELEBRATION!
+                    setTimeout(() => {
+                        this.soundManager.playJackpot();
+                        this.spawnCelebration();
+                        this.openNameEntry();
+                    }, 600); // Wait for tower zoom to finish
+                } else {
+                    console.log("🍞 Solid run, but not Top 10. Min needed was:", snapshot.docs[9] ? snapshot.docs[9].data().score : 0);
+                }
+            } catch (e) {
+                console.error("Top 10 check failed, defaulting to celebrate:", e);
+                // Fallback: Celebrate anyway if score is > 0
+                if (this.score > 0) {
+                    setTimeout(() => {
+                        this.soundManager.playJackpot();
+                        this.spawnCelebration();
+                        this.openNameEntry();
+                    }, 600);
+                }
+            }
+        } else {
+            console.log("🚫 Score 0 or Firebase not ready.");
+        }
+    }
+
+    spawnCelebration() {
+        const count = 100;
+        const colors = ['#fbbf24', '#fef3c7', '#d97706', '#ffffff'];
+        for (let i = 0; i < count; i++) {
+            const x = Math.random() * this.canvas.width;
+            const y = this.canvas.height + 50;
+            const p = new Particle(x, y, colors[Math.floor(Math.random() * colors.length)]);
+            p.vy = -Math.random() * 25 - 10;
+            p.vx = (Math.random() - 0.5) * 15;
+            this.particles.push(p);
+        }
+    }
+
+    openNameEntry() {
+        document.getElementById('name-entry-overlay').classList.add('active');
+        document.getElementById('player-name').focus();
+    }
+
+    closeNameEntry() {
+        document.getElementById('name-entry-overlay').classList.remove('active');
+    }
+
+    async submitCurrentScore() {
+        const nameInput = document.getElementById('player-name');
+        const name = nameInput.value.trim() || "BREAD LOVER";
+        const btn = document.getElementById('submit-score-btn');
+
+        if (!this.firebaseInitialized) {
+            alert("Firebase not configured. Please see instructions!");
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = "SAVING...";
+
+        try {
+            await this.db.collection("leaderboard").add({
+                name: name,
+                score: this.score,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            
+            // Transition to leaderboard
+            nameInput.value = "";
+            this.closeNameEntry();
+            this.showLeaderboard();
+        } catch (e) {
+            console.error("Score Save Error:", e);
+            alert("Failed to save score. Check console.");
+            btn.disabled = false;
+            btn.textContent = "SUBMIT TO GLOBAL";
+        }
+    }
+
+    async showLeaderboard() {
+        const overlay = document.getElementById('leaderboard-overlay');
+        const list = document.getElementById('leaderboard-list');
+        const scoreContainer = document.getElementById('score-container');
+
+        list.innerHTML = '<div class="leaderboard-entry"><span class="entry-name">LOADING BREAD DATA...</span></div>';
+        
+        overlay.classList.add('active');
+        if (scoreContainer) scoreContainer.classList.remove('visible');
+
+        if (!this.firebaseInitialized) {
+            list.innerHTML = '<div class="leaderboard-entry"><span class="entry-name">FIREBASE NOT SETUP</span></div>';
+            return;
+        }
+
+        try {
+            const snapshot = await this.db.collection("leaderboard")
+                .orderBy("score", "desc")
+                .limit(10)
+                .get();
+
+            list.innerHTML = "";
+            let rank = 1;
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                const item = document.createElement('div');
+                item.className = 'leaderboard-entry';
+                item.innerHTML = `
+                    <span class="entry-rank">#${rank++}</span>
+                    <span class="entry-name">${data.name || 'ANONYMOUS'}</span>
+                    <span class="entry-score">${data.score}</span>
+                `;
+                list.appendChild(item);
+            });
+
+            if (snapshot.empty) {
+                list.innerHTML = '<div class="leaderboard-entry"><span class="entry-name">NO SCORES YET!</span></div>';
+            }
+        } catch (e) {
+            console.error("Fetch Error:", e);
+            list.innerHTML = '<div class="leaderboard-entry"><span class="entry-name">ERROR FETCHING SCORES</span></div>';
+        }
+    }
+
+    hideLeaderboard() {
+        document.getElementById('leaderboard-overlay').classList.remove('active');
+        // Bring score back if we are still in Game Over
+        if (this.gameState === 'GAMEOVER') {
+            document.getElementById('score-container').classList.add('visible');
+        }
     }
 
     showMenu() {
@@ -599,6 +847,16 @@ class Game {
 
         // --- CAMERA RESET: Back to base view ---
         this.camera = { x: 0, targetX: 0, y: 0, targetY: 0, scale: 1, targetScale: 1, yOffset: 0, xOffset: 0 };
+        
+        // Reset UI states
+        this.closeNameEntry();
+        
+        // Reset submit button state
+        const submitBtn = document.getElementById('submit-score-btn');
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "SUBMIT TO GLOBAL";
+        }
     }
 
     animate() {
@@ -622,7 +880,9 @@ class Game {
 
             // ANTI-OVERLAP ENGINE: Measure available vertical space between UI elements
             const scoreRect = document.getElementById('score-container').getBoundingClientRect();
-            const btnRect = document.getElementById('restart-button').getBoundingClientRect();
+            // Use the top-most button for framing
+            const topBtn = document.getElementById('restart-button');
+            const btnRect = topBtn.getBoundingClientRect();
             const availableGap = (btnRect.top - scoreRect.bottom) - 40; // 40px safety padding
             
             // SELF-RESIZE: Zoom to exactly fit the gap with 5% extra clearance
@@ -682,6 +942,7 @@ class Game {
         if (this.displayScore < this.score) {
             this.displayScore = Math.min(this.score, this.displayScore + Math.ceil((this.score - this.displayScore) * 0.1));
             this.scoreValue.textContent = this.displayScore;
+            if (this.finalScoreValue) this.finalScoreValue.textContent = this.displayScore;
         }
 
         requestAnimationFrame(() => this.animate());
